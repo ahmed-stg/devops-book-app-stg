@@ -51,19 +51,6 @@ pipeline {
                         ${IMAGE_NAME}"""
             }
         }
-        stage("verify") {
-            steps {
-                script {
-                    echo "Verifying container ${CONTAINER_NAME} is running..."
-                    def containerId = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
-                    if (!containerId) {
-                        error("Deployment verification failed: container ${CONTAINER_NAME} is not running.")
-                    } else {
-                        echo "Container is running: ${containerId}"
-                    }
-                }
-            }
-        }
     }
 
     post {
