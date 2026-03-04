@@ -27,7 +27,13 @@ pipeline {
             }
         }
 
-        // testing stage removed to allow automatic deployment on push
+        // //npm test stage
+        // stage("testing") {
+        //     steps {
+        //         sh "npm test"
+        //     }
+        // }
+
 
         stage("build Docker Image") {
             steps {
