@@ -20,7 +20,7 @@ app.get('/books', (req, res) => {
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Book Liist</title>
+  <title>Book List</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:#f6f8fa;color:#0b1220;padding:24px}
