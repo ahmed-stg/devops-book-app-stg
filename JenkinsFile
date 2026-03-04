@@ -7,8 +7,8 @@ pipeline {
         retry(2)
     }
     environment {
-        REPO_URL = 'https://github.com/malkiAbdelhamid/book-app.git'
-        BRANCH  = 'master'
+        REPO_URL = 'https://github.com/ahmed-stg/devops-book-app-stg'
+        BRANCH  = 'main'
         IMAGE_NAME= 'book-application'
         CONTAINER_NAME = 'book-app-container'
         EXTERNAL_PORT = '3000'
