@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+    options{
+        timestamps()
+        disableConcurrentBuilds()
+        timeout(time: 20,unit:'MINUTES')
+        retry(2)
+    }
+    environment {
+        REPO_URL = 'https://github.com/malkiAbdelhamid/book-app.git'
+        BRANCH  = 'master'
+        IMAGE_NAME= 'book-application'
+        CONTAINER_NAME = 'book-app-container'
+        EXTERNAL_PORT = '3000'
+    }
+
+    stages {
+        stage("cloning") {
+            steps {
+                git branch: "${BRANCH}",url: "${REPO_URL}"
+            }
+        }
+
+        stage("installing") {
+            steps {
+                sh "npm install"
+            }
+        }
+
+        // testing stage removed to allow automatic deployment on push
+
+        stage("build Docker Image") {
+            steps {
+                sh "docker build -t ${IMAGE_NAME} ."
+            }
+        }
+
+        // approval stage removed to make deployment automatic
+
+        stage("deploy") {
+            steps {
+                sh """
+                    echo "remvoing old container "
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
+
+                    echo "launching a new container..."
+                    docker run -d \
+                        --name ${CONTAINER_NAME} \
+                        -p ${EXTERNAL_PORT}:3000 \
+                        ${IMAGE_NAME}"""
+            }
+        }
+        stage("verify") {
+            steps {
+                script {
+                    echo "Verifying container ${CONTAINER_NAME} is running..."
+                    def containerId = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
+                    if (!containerId) {
+                        error("Deployment verification failed: container ${CONTAINER_NAME} is not running.")
+                    } else {
+                        echo "Container is running: ${containerId}"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finished"
+            cleanWs()
+        }
+    }
+}
